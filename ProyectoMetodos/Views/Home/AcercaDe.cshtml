@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Acerca de";
+}
+
+<div style="margin-right: 30px;">
+    <img src="~/Content/Images/Logo.png" alt="Logo UMG" style="height: 100px;" />
+</div>
+
+<div class="text-center">
+
+    <div class="text-center">
+        <h1 style="font-size: 3em; margin-bottom: 0.2em;">Proyecto</h1>
+        <h2 style="font-size: 2.2em; margin-top: 0;">Métodos Numéricos</h2>
+    </div>
+
+    <div class="mt-4 text-start" style="display: inline-block; max-width: 600px;">
+        <p><strong>Lenguaje de programación:</strong> C#</p>
+        <p><strong>Base de datos utilizada:</strong> SQLite</p>
+        <p><strong>Tecnologías:</strong> ASP.NET MVC</p>
+        <p><strong>IDE:</strong> Visual Studio 2022</p>
+
+        <p><strong>Librerías:</strong></p>
+        <ul>
+            <li>
+                <strong>MathNet.Symbolics</strong>: usada para el <em>parseo</em> y la evaluación simbólica de
+                funciones en los métodos iterativos (Newton-Raphson, Secante, Müller),
+                facilitando el cálculo de derivadas y la evaluación de expresiones matemáticas.
+            </li>
+            <li>
+                <strong>System.Data.SQLite</strong>: empleada para la conexión y ejecución de consultas
+                en la base de datos SQLite, donde se almacenan los historiales de ejecuciones
+                y los resultados de los métodos numéricos.
+            </li>
+            <li>
+                <strong>iTextSharp</strong>: utilizada para generar y descargar los reportes en PDF,
+                renderizando plantillas HTML con los resultados de cada ejecución directamente
+                desde la aplicación web.
+            </li>
+        </ul>
+    </div>
+
+</div>

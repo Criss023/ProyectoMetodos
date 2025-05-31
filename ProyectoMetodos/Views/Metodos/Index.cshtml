@@ -1,0 +1,377 @@
+﻿@{
+    ViewBag.Title = "Métodos";
+
+}
+
+@{
+    bool hayResultados = ViewBag.Resultados != null || ViewBag.ResultadosGauss != null;
+}
+
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna izquierda: Botones -->
+        <div class="col-md-4">
+            <div class="d-grid gap-3">
+                <button type="button" class="btn btn-outline-primary metodo-btn py-3 shadow-sm" data-metodo="NewtonRaphson">
+                    <i class="bi bi-gear-fill me-2"></i> Newton-Raphson
+                </button>
+                <button type="button" class="btn btn-outline-primary metodo-btn py-3 shadow-sm" data-metodo="Muller">
+                    <i class="bi bi-gear-wide-connected me-2"></i> Müller
+                </button>
+                <button type="button" class="btn btn-outline-primary metodo-btn py-3 shadow-sm" data-metodo="Secante">
+                    <i class="bi bi-activity me-2"></i> Secante
+                </button>
+                <button type="button" class="btn btn-outline-primary metodo-btn py-3 shadow-sm" data-metodo="GaussSeidel">
+                    <i class="bi bi-grid-3x3-gap-fill me-2"></i> Gauss-Seidel
+                </button>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Contenido o mensaje -->
+        <div class="col-md-8">
+            @if (!hayResultados)
+            {
+                <div id="mensajeInicial" class="alert alert-info text-center mb-0">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>Seleccione el método numérico que desea resolver</strong>
+                </div>
+            }
+
+            <!-- Newton-Raphson -->
+            @using (Html.BeginForm("NewtonRaphson", "Metodos", FormMethod.Post))
+            {
+                <div id="formularioNewtonRaphson" class="metodo-form" style="display:none;">
+                    <h4 class="text-center">Método de Newton-Raphson</h4>
+
+                    <div class="row mb-2">
+                        <label for="funcionNR" class="col-md-4 col-form-label text-end">Función f(x):</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="funcionNR" name="funcion" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="x0NR" class="col-md-4 col-form-label text-end">Valor inicial (x₀):</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="x0NR" name="valorInicial" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="toleranciaNR" class="col-md-4 col-form-label text-end">Tolerancia:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="toleranciaNR" name="tolerancia" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="maxIterNR" class="col-md-4 col-form-label text-end">Máximo de iteraciones:</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="maxIterNR" name="maxIteraciones" required />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" class="btn btn-success px-4">Calcular</button>
+                    </div>
+                </div>
+            }
+
+            @using (Html.BeginForm("Muller", "Metodos", FormMethod.Post))
+            {
+                <!-- Muller -->
+                <div id="formularioMuller" class="metodo-form" style="display:none;">
+                    <h4 class="text-center">Metodo de Muller</h4>
+
+                    <div class="row mb-2">
+                        <label for="funcionMuller" class="col-md-4 col-form-label text-end">Función f(x):</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="funcionMuller" name="funcion" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="x0Muller" class="col-md-4 col-form-label text-end">x₀:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="x0Muller" name="x0" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="x1Muller" class="col-md-4 col-form-label text-end">x₁:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="x1Muller" name="x1" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="x2Muller" class="col-md-4 col-form-label text-end">x₂:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="x2Muller" name="x2" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="toleranciaMuller" class="col-md-4 col-form-label text-end">Tolerancia:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="toleranciaMuller" name="tolerancia" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="maxIterMuller" class="col-md-4 col-form-label text-end">Máximo de iteraciones:</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="maxIterMuller" name="maxIteraciones" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" class="btn btn-success px-4">Calcular</button>
+                    </div>
+                </div>
+            }
+
+            <!-- Secante -->
+            @using (Html.BeginForm("Secante", "Metodos", FormMethod.Post))
+            {
+                <div id="formularioSecante" class="metodo-form" style="display:none;">
+                    <h4 class="text-center">Método de la Secante</h4>
+
+                    <div class="row mb-2">
+                        <label for="funcionSecante" class="col-md-4 col-form-label text-end">Función f(x):</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="funcionSecante" name="funcion" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="x0Sec" class="col-md-4 col-form-label text-end">x₀:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="x0Sec" name="x0" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="x1Sec" class="col-md-4 col-form-label text-end">x₁:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="x1Sec" name="x1" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="toleranciaSec" class="col-md-4 col-form-label text-end">Tolerancia:</label>
+                        <div class="col-md-8">
+                            <input type="number" step="any" class="form-control" id="toleranciaSec" name="tolerancia" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <label for="maxIterSec" class="col-md-4 col-form-label text-end">Máximo de iteraciones:</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="maxIterSec" name="maxIteraciones" required />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" class="btn btn-success px-4">Calcular</button>
+                    </div>
+                </div>
+            }
+
+
+            @using (Html.BeginForm("GaussSeidel", "Metodos", FormMethod.Post))
+            {
+                <!-- Gauss-Seidel -->
+                <div id="formularioGaussSeidel" class="metodo-form" style="display:none;">
+                    <h4 class="text-center mb-4">Método de Gauss-Seidel</h4>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Matriz A (3x3):</h5>
+                            <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); display: grid;">
+                                <input type="number" step="any" class="form-control" placeholder="A11" name="A11" required />
+                                <input type="number" step="any" class="form-control" placeholder="A12" name="A12" required />
+                                <input type="number" step="any" class="form-control" placeholder="A13" name="A13" required />
+
+                                <input type="number" step="any" class="form-control" placeholder="A21" name="A21" required />
+                                <input type="number" step="any" class="form-control" placeholder="A22" name="A22" required />
+                                <input type="number" step="any" class="form-control" placeholder="A23" name="A23" required />
+
+                                <input type="number" step="any" class="form-control" placeholder="A31" name="A31" required />
+                                <input type="number" step="any" class="form-control" placeholder="A32" name="A32" required />
+                                <input type="number" step="any" class="form-control" placeholder="A33" name="A33" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Vector b:</h5>
+                            <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); display: grid;">
+                                <input type="number" step="any" class="form-control" placeholder="b1" name="b1" required />
+                                <input type="number" step="any" class="form-control" placeholder="b2" name="b2" required />
+                                <input type="number" step="any" class="form-control" placeholder="b3" name="b3" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Valores iniciales para x:</h5>
+                            <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); display: grid;">
+                                <input type="number" step="any" class="form-control" placeholder="x0_1" name="x0_1" required />
+                                <input type="number" step="any" class="form-control" placeholder="x0_2" name="x0_2" required />
+                                <input type="number" step="any" class="form-control" placeholder="x0_3" name="x0_3" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="toleranciaGS" class="form-label">Tolerancia:</label>
+                            <input type="number" step="any" class="form-control" id="toleranciaGS" name="tolerancia" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maxIterGS" class="form-label">Máximo de iteraciones:</label>
+                            <input type="number" class="form-control" id="maxIterGS" name="maxIteraciones" required />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" class="btn btn-success px-4">Calcular</button>
+                    </div>
+
+                </div>
+            }
+
+
+            @if (ViewBag.Resultados != null && ((List<ProyectoMetodos.MetodosLogica.MetodoResultado>)ViewBag.Resultados).Count > 0)
+            {
+                string metodo = ViewBag.MetodoSeleccionado as string ?? "Método";
+
+                <h2 class="text-center">@metodo</h2>
+                <h2 class="text-center">Resultados</h2>
+                <p class="text-center">Función ingresada: @ViewBag.FuncionIngresada</p>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Iteración</th>
+                            <th>Valor de x</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var resultados = (List<ProyectoMetodos.MetodosLogica.MetodoResultado>)ViewBag.Resultados;
+                            foreach (var res in resultados)
+                            {
+                                if (!string.IsNullOrEmpty(res.MensajeError))
+                                {
+                                    <tr>
+                                        <td colspan="3" style="color:red;">@res.MensajeError</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@res.Iteracion</td>
+                                        <td>@res.X.ToString("F6")</td>
+                                        <td>@res.Error.ToString("F6")</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+            @if (ViewBag.ResultadosGauss != null)
+            {
+                var resultado = (ProyectoMetodos.MetodosLogica.GaussSeidelResultado)ViewBag.ResultadosGauss;
+
+                <h2 class="text-center">@ViewBag.MetodoSeleccionado</h2>
+                <h2 class="text-center">Resultados</h2>
+                <h4 class="text-center">Ecuaciones ingresadas:</h4>
+                <p class="text-center">@ViewBag.FuncionIngresada</p>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Iteración</th>
+                            <th>Valores de X</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var iter in resultado.IteracionesDetalle)
+                        {
+                            <tr>
+                                <td>@iter.Numero</td>
+                                <td>
+                                    X1 = @iter.X1.ToString("F6"),
+                                    X2 = @iter.X2.ToString("F6"),
+                                    X3 = @iter.X3.ToString("F6")
+                                </td>
+                                <td>@iter.Error.ToString("F6")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @if (ViewBag.Resultados != null || ViewBag.ResultadosGauss != null)
+            {
+                <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                    <span></span> <!-- espacio izquierdo vacío -->
+
+                    <div style="display: flex; gap: 10px;">
+                        <!-- Botón de Reporte -->
+                        <form action="@Url.Action("Reporte", "Metodos")" method="get">
+                            <input type="hidden" name="metodo" value="@ViewBag.MetodoSeleccionado" />
+                            <button type="submit" class="btn btn-primary">Reporte</button>
+                        </form>
+
+                        <!-- Botón de Descargar PDF -->
+                        <form action="@Url.Action("DescargarPDF", "Metodos")" method="get">
+                            <input type="hidden" name="metodo" value="@ViewBag.MetodoSeleccionado" />
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const botones = document.querySelectorAll(".metodo-btn");
+    const formularios = document.querySelectorAll(".metodo-form");
+    const inputMetodo = document.getElementById("metodoSeleccionado");
+    const mensajeInicial = document.getElementById("mensajeInicial");
+
+    botones.forEach(boton => {
+        boton.addEventListener("click", () => {
+            // Ocultar mensaje inicial
+            mensajeInicial.style.display = "none";
+
+            // Ocultar todos los formularios
+            formularios.forEach(f => f.style.display = "none");
+
+            // Obtener el método
+            const metodo = boton.getAttribute("data-metodo");
+
+            // Mostrar el formulario correspondiente
+            const formId = "formulario" + metodo;
+            document.getElementById(formId).style.display = "block";
+
+            // Establecer el valor del input oculto
+            inputMetodo.value = metodo;
+        });
+    });
+</script>

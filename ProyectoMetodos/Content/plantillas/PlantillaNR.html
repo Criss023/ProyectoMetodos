@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Reporte Método @metodo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+        }
+
+        .header-table {
+            width: 100%;
+            border: none;
+            border-collapse: collapse;
+            border-color: transparent;
+        }
+
+            .header-table td {
+                padding: 0;
+                vertical-align: middle;
+                border: none;
+                border-color: transparent;
+            }
+
+        
+        .logo-cell {
+            width: 90px; 
+        }
+
+            .logo-cell img {
+                height: 90px; 
+                width: auto;
+                display: block;
+                margin: 0 auto;
+            }
+
+        .title-cell {
+            text-align: center;
+        }
+
+        .header img {
+            height: 90px;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        p.fecha {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .parametros {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+            .parametros p {
+                margin: 6px 0;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #666;
+            padding: 8px 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabecera con tabla transparente -->
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg/512px-Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg.png"
+                     alt="Logo" />
+            </td>
+            <td class="title-cell">
+                <h1>Reporte del Método @metodo</h1>
+                <p class="fecha"><strong>Fecha:</strong> @fecha</p>
+            </td>
+            <td class="logo-cell">
+                <!-- Celda vacía para balancear -->
+            </td>
+        </tr>
+    </table>
+
+    <!-- Parámetros iniciales con estilo-->
+    <div class="parametros">
+        <p><strong>Parámetros Iniciales:</strong></p>
+        <p><strong>Función ingresada:</strong> @funcion</p>
+        <p><strong>Derivada:</strong> @derivada</p>
+        <p><strong>Valor inicial x₀:</strong> @x0</p>
+        <p><strong>Tolerancia:</strong> @tolerancia</p>
+        <p><strong>Máx. Iteraciones:</strong> @maxIteraciones</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Iteraciones</th>
+                <th>X</th>
+                <th>Error aproximado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @filas
+        </tbody>
+    </table>
+
+</body>
+</html>

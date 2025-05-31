@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Reporte";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var reportesEjecucion = ViewBag.Reportes as List<ProyectoMetodos.Models.ReporteEjecucion>;
+    var reportesGauss = ViewBag.ResultadosGauss as List<ProyectoMetodos.Models.ReporteGS>;
+}
+
+<div class="container text-center">
+
+    @{
+        string metodo = ViewBag.MetodoSeleccionado as string ?? "";
+    }
+
+    @if (reportesEjecucion != null && reportesEjecucion.Any())
+    {
+        <h2 class="text-center">Reporte @ViewBag.MetodoSeleccionado</h2>
+
+        foreach (var reporte in reportesEjecucion)
+        {
+            <h4 class="text-center">Función Ingresada:</h4>
+            <p class="text-center">@reporte.FuncionIngresada</p>
+            <p><strong>Fecha de ejecución:</strong> @reporte.FechaEjecucion</p>
+
+            <h5 class="text-center">
+                Resultado Final:
+                @if (reporte.Resultados != null && reporte.Resultados.Any())
+                {
+                    @(reporte.Resultados.Last().X.ToString("F6"))
+                }
+                else
+                {
+                    <text>No disponible</text>
+                }
+            </h5>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Iteración</th>
+                        <th>Valor de X</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var iter in reporte.IteracionMetodos)
+                    {
+                        <tr>
+                            <td>@iter.Iteracion</td>
+                            <td>@(iter.ValorX?.ToString("F6") ?? "-")</td>
+                            <td>@iter.Error.ToString("F6")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <hr />
+        }
+    }
+
+
+
+    @if (reportesGauss != null)
+    {
+        <h2 class="text-center">Reporte @ViewBag.MetodoSeleccionado</h2>
+
+        foreach (var reporte in reportesGauss)
+        {
+            <h4 class="text-center">Ecuaciones ingresadas:</h4>
+            <p class="text-center">@Html.Raw(reporte.Ecuaciones)</p>
+            <p><strong>Fecha de ejecución:</strong> @reporte.FechaRegistro</p>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Iteración</th>
+                        <th>Valores de X</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var iter in reporte.Iteraciones)
+                    {
+                        <tr>
+                            <td>@iter.Numero</td>
+                            <td>
+                                X1 = @iter.X1.ToString("F6"),
+                                X2 = @iter.X2.ToString("F6"),
+                                X3 = @iter.X3.ToString("F6")
+                            </td>
+                            <td>@iter.Error.ToString("F6")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+</div>
+

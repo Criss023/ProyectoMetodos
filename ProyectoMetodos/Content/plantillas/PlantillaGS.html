@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Reporte Gauss-Seidel</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+        }
+
+        .header-table {
+            width: 100%;
+            vertical-align: middle;
+            border: none;
+            border-color: transparent;
+        }
+
+            .header-table td {
+                padding: 0;
+                vertical-align: middle;
+                border: none;
+                border-color: transparent;
+            }
+
+        .logo-cell {
+            width: 80px;
+        }
+
+        .title-cell {
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        p.fecha {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .parametros {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+            .parametros p {
+                margin: 6px 0;
+            }
+
+        .ecuaciones-container {
+            margin: 10px 0;
+        }
+
+        .ecuaciones-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: auto;
+            margin: 0 auto;
+        }
+
+            .ecuaciones-table td {
+                padding: 2px 4px;
+                text-align: right;
+                white-space: nowrap;
+            }
+
+                .ecuaciones-table td.variable {
+                    text-align: left;
+                }
+
+                .ecuaciones-table td.operator {
+                    text-align: center;
+                    padding: 2px 5px;
+                }
+
+                .ecuaciones-table td.equals {
+                    text-align: center;
+                    padding: 2px 10px;
+                }
+
+        .valores-iniciales {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+            .valores-iniciales div {
+                flex: 1;
+                padding: 5px;
+                background-color: #f0f0f0;
+                border-radius: 3px;
+                text-align: left;
+            }
+
+        .tolerancia-iteraciones p {
+            margin: 4px 0;
+        }
+
+        table.resultados {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 11px;
+        }
+
+        .resultados thead th,
+        .resultados tbody td {
+            border: 1px solid #666;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        .resultados thead th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .resultados tbody tr:nth-child(even) td {
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabecera con tabla transparente -->
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg/512px-Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg.png"
+                     alt="Logo" />
+            </td>
+            <td class="title-cell">
+                <h1>Reporte del Método @metodo</h1>
+                <p class="fecha"><strong>Fecha:</strong> @fecha</p>
+            </td>
+            <td class="logo-cell">
+                <!-- Celda vacía para balancear -->
+            </td>
+        </tr>
+    </table>
+
+    <div class="parametros">
+        <p><strong>Parámetros Iniciales:</strong></p>
+
+        <p><strong>Ecuaciones:</strong></p>
+        <div class="ecuaciones-container">
+            <table class="ecuaciones-table">
+                @ecuacionesTable
+            </table>
+        </div>
+
+        <div class="valores-iniciales">
+            <div><strong>Valores iniciales de X:</strong></div>
+            <div><strong>X1:</strong> @x1</div>
+            <div><strong>X2:</strong> @x2</div>
+            <div><strong>X3:</strong> @x3</div>
+        </div>
+
+        <div class="tolerancia-iteraciones">
+            <p><strong>Tolerancia:</strong> @tolerancia</p>
+            <p><strong>Max Iteraciones:</strong> @maxIteraciones</p>
+        </div>
+    </div>
+
+    <table class="resultados">
+        <thead>
+            <tr>
+                <th>Iteración</th>
+                <th>X1</th>
+                <th>X2</th>
+                <th>X3</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+        <tbody>
+            @filasIteraciones
+        </tbody>
+    </table>
+</body>
+</html>
