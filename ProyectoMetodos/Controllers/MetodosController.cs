@@ -15,7 +15,6 @@ using System.Web.Hosting;
 using iTextSharp.tool.xml;
 using System.Text;
 using System.Web;
-using MathNet.Symbolics;
 using Expr = MathNet.Symbolics.SymbolicExpression;
 using System.Globalization;
 
