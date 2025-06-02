@@ -78,10 +78,13 @@ namespace ProyectoMetodos.Controllers
                 TempData["Mensaje"] = "Usuario registrado exitosamente";
                 return RedirectToAction("Index", "Login");
             }
+            else
+            {
+                ModelState.AddModelError("", "Ya existe un usuario con ese nombre y contraseña.");
+                ViewBag.Usuario = usuario;
+                return View();
+            }
 
-            ViewBag.Error = "Hubo un error al registrar el usuario";
-            ViewBag.Usuario = usuario;
-            return View();
         }
 
     }

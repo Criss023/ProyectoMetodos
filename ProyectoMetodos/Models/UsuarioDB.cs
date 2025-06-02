@@ -67,9 +67,26 @@ namespace ProyectoMetodos.Models
             using (var cn = new SQLiteConnection(conexion))
             {
                 cn.Open();
+
+                // 1. Validar si ya existe un usuario con el mismo nombre y contraseña
+                using (var checkCmd = new SQLiteCommand(@"
+            SELECT COUNT(*) FROM USUARIO 
+            WHERE Usuario = @Usuario AND Contrasena = @Contrasena", cn))
+                {
+                    checkCmd.Parameters.AddWithValue("@Usuario", usuario.Usuario);
+                    checkCmd.Parameters.AddWithValue("@Contrasena", usuario.Contrasena);
+
+                    var existe = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
+                    if (existe)
+                    {
+                        return false; // Ya existe un usuario con estos datos
+                    }
+                }
+
+                // 2. Insertar si no existe
                 using (var cmd = new SQLiteCommand(@"
-                    INSERT INTO USUARIO (Usuario, Contrasena)
-                    VALUES (@Usuario, @Contrasena)", cn))
+            INSERT INTO USUARIO (Usuario, Contrasena)
+            VALUES (@Usuario, @Contrasena)", cn))
                 {
                     cmd.Parameters.AddWithValue("@Usuario", usuario.Usuario);
                     cmd.Parameters.AddWithValue("@Contrasena", usuario.Contrasena);
