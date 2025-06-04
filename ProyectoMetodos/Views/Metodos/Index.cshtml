@@ -28,6 +28,19 @@
 
         <!-- Columna derecha: Contenido o mensaje -->
         <div class="col-md-8">
+
+            @if (ViewBag.Errores != null)
+            {
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach (string error in (List<string>)ViewBag.Errores)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
+
             @if (!hayResultados)
             {
                 <div id="mensajeInicial" class="alert alert-info text-center mb-0">
@@ -35,6 +48,7 @@
                     <strong>Seleccione el método numérico que desea resolver</strong>
                 </div>
             }
+
 
             <!-- Formularios de métodos -->
             @using (Html.BeginForm("NewtonRaphson", "Metodos", FormMethod.Post))
@@ -419,22 +433,44 @@
             if (!formulario) return;
 
             formulario.addEventListener('submit', function (e) {
-                // a) Si el bloque está oculto, no enviamos este formulario
                 const estilo = window.getComputedStyle(bloque);
                 if (estilo.display === 'none') {
                     e.preventDefault();
                     return;
                 }
 
-                // b) Si está visible, verificar que todos los inputs required tengan valor
                 const inputsRequeridos = bloque.querySelectorAll('input[required]');
                 for (let i = 0; i < inputsRequeridos.length; i++) {
                     const campo = inputsRequeridos[i];
                     if (!campo.value) {
                         e.preventDefault();
-                        alert('Por favor, complete todos los campos antes de calcular.');
+                        alert('Por favor, complete todos los campos requeridos.');
                         return;
                     }
+                }
+
+                // Validación de campos específicos
+                const tolerancia = bloque.querySelector('input[name="tolerancia"]');
+                const maxIter = bloque.querySelector('input[name="maxIteraciones"]');
+
+                if (tolerancia && parseFloat(tolerancia.value) <= 0) {
+                    e.preventDefault();
+                    alert('La tolerancia debe ser mayor que cero.');
+                    return;
+                }
+
+                if (maxIter && parseInt(maxIter.value) <= 0) {
+                    e.preventDefault();
+                    alert('El número máximo de iteraciones debe ser mayor que cero.');
+                    return;
+                }
+
+                // Validación de función (solo presencia de 'x' como mínima prueba)
+                const funcion = bloque.querySelector('input[name="funcion"]');
+                if (funcion && !funcion.value.includes('x')) {
+                    e.preventDefault();
+                    alert('La función debe contener la variable "x".');
+                    return;
                 }
             });
         });

@@ -46,19 +46,51 @@ namespace ProyectoMetodos.Controllers
             if (Session["usuario"] == null)
                 return RedirectToAction("Index", "Login");
 
-            // 1) Parseo y derivacion automáticamente
-            Expr expr = Expr.Parse(funcion);
-            Expr derivadaExpr = expr.Differentiate("x");
-            string derivada = derivadaExpr.ToString();
+            var errores = new List<string>();
 
-            // 2) Calculo de iteraciones
-            var resultados = NewtonLogica.Calcular(funcion, derivada, valorInicial, tolerancia, maxIteraciones);
+            // Validar función
+            if (string.IsNullOrWhiteSpace(funcion))
+            {
+                errores.Add("Debe ingresar una función.");
+            }
+            else
+            {
+                try
+                {
+                    var expr = Expr.Parse(funcion); // prueba de parseo
+                    var derivadaExpr = expr.Differentiate("x");
+                }
+                catch
+                {
+                    errores.Add("La función ingresada no es válida. Use notación correcta con 'x'.");
+                }
+            }
 
-            // 3) Guardar en base de datos
+            // Validar tolerancia
+            if (tolerancia <= 0)
+                errores.Add("La tolerancia debe ser un valor positivo mayor a cero.");
+
+            // Validar iteraciones
+            if (maxIteraciones <= 0)
+                errores.Add("El número de iteraciones debe ser mayor a cero.");
+
+            if (errores.Any())
+            {
+                ViewBag.MetodoSeleccionado = "NewtonRaphson";
+                ViewBag.FuncionIngresada = funcion;
+                ViewBag.Errores = errores;
+                return View("Index");
+            }
+
+            // Si todo está bien
+            var exprFinal = Expr.Parse(funcion);
+            var derivadaFinal = exprFinal.Differentiate("x").ToString();
+
+            var resultados = NewtonLogica.Calcular(funcion, derivadaFinal, valorInicial, tolerancia, maxIteraciones);
+
             GuardarEjecucion("Newton-Raphson", funcion, resultados);
 
-            // 4) Guardar en sesion para el pdf
-            Session["DerivadaActual"] = derivada;
+            Session["DerivadaActual"] = derivadaFinal;
             Session["ValorInicialActual"] = valorInicial;
             Session["ToleranciaActual"] = tolerancia;
             Session["MaxIterActual"] = maxIteraciones;
@@ -66,13 +98,13 @@ namespace ProyectoMetodos.Controllers
             Session["Resultados"] = resultados;
             Session["MetodoActual"] = "NewtonRaphson";
 
-            // 5) Preparacion de vista
             ViewBag.Resultados = resultados;
             ViewBag.MetodoSeleccionado = "NewtonRaphson";
             ViewBag.FuncionIngresada = funcion;
 
             return View("Index");
         }
+
 
         // GET: Metodos/Secante
         [HttpGet]
@@ -87,6 +119,41 @@ namespace ProyectoMetodos.Controllers
         {
             if (Session["usuario"] == null)
                 return RedirectToAction("Index", "Login");
+
+            var errores = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(funcion))
+            {
+                errores.Add("Debe ingresar una función.");
+            }
+            else
+            {
+                try
+                {
+                    Expr.Parse(funcion);
+                }
+                catch
+                {
+                    errores.Add("La función ingresada no es válida. Use notación matemática correcta con 'x'.");
+                }
+            }
+
+            if (tolerancia <= 0)
+                errores.Add("La tolerancia debe ser mayor a cero.");
+
+            if (maxIteraciones <= 0)
+                errores.Add("El número de iteraciones debe ser mayor a cero.");
+
+            if (x0 == x1)
+                errores.Add("Los valores iniciales x0 y x1 deben ser diferentes.");
+
+            if (errores.Any())
+            {
+                ViewBag.MetodoSeleccionado = "Secante";
+                ViewBag.FuncionIngresada = funcion;
+                ViewBag.Errores = errores;
+                return View("Index");
+            }
 
             var resultados = SecanteLogica.Calcular(funcion, x0, x1, tolerancia, maxIteraciones);
 
@@ -106,6 +173,7 @@ namespace ProyectoMetodos.Controllers
             return View("Index");
         }
 
+
         // GET: Metodos/Muller
         [HttpGet]
         public ActionResult Muller() 
@@ -119,6 +187,41 @@ namespace ProyectoMetodos.Controllers
         {
             if (Session["usuario"] == null)
                 return RedirectToAction("Index", "Login");
+
+            var errores = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(funcion))
+            {
+                errores.Add("Debe ingresar una función.");
+            }
+            else
+            {
+                try
+                {
+                    Expr.Parse(funcion);
+                }
+                catch
+                {
+                    errores.Add("La función ingresada no es válida. Use notación correcta con 'x'.");
+                }
+            }
+
+            if (tolerancia <= 0)
+                errores.Add("La tolerancia debe ser mayor a cero.");
+
+            if (maxIteraciones <= 0)
+                errores.Add("El número de iteraciones debe ser mayor a cero.");
+
+            if (x0 == x1 || x1 == x2 || x0 == x2)
+                errores.Add("Los valores x0, x1 y x2 deben ser diferentes entre sí.");
+
+            if (errores.Any())
+            {
+                ViewBag.MetodoSeleccionado = "Muller";
+                ViewBag.FuncionIngresada = funcion;
+                ViewBag.Errores = errores;
+                return View("Index");
+            }
 
             var resultados = MullerLogica.Calcular(funcion, x0, x1, x2, tolerancia, maxIteraciones);
 
@@ -139,6 +242,7 @@ namespace ProyectoMetodos.Controllers
             return View("Index");
         }
 
+
         // GET: Metodos/GaussSeidel
         [HttpGet]
         public ActionResult GaussSeidel()
@@ -149,38 +253,53 @@ namespace ProyectoMetodos.Controllers
         // POST: Metodos/GaussSeidel
         [HttpPost]
         public ActionResult GaussSeidel(
-            double A11, double A12, double A13,
-            double A21, double A22, double A23,
-            double A31, double A32, double A33,
-            double b1, double b2, double b3,
-            double x0_1, double x0_2, double x0_3,
-            double tolerancia, int maxIteraciones)
+     double A11, double A12, double A13,
+     double A21, double A22, double A23,
+     double A31, double A32, double A33,
+     double b1, double b2, double b3,
+     double x0_1, double x0_2, double x0_3,
+     double tolerancia, int maxIteraciones)
         {
             if (Session["usuario"] == null)
                 return RedirectToAction("Index", "Login");
 
-            // Crear la matriz A
+            var errores = new List<string>();
+
+            // Validar que no haya filas completamente nulas
+            bool fila1Cero = A11 == 0 && A12 == 0 && A13 == 0;
+            bool fila2Cero = A21 == 0 && A22 == 0 && A23 == 0;
+            bool fila3Cero = A31 == 0 && A32 == 0 && A33 == 0;
+
+            if (fila1Cero || fila2Cero || fila3Cero)
+                errores.Add("Las filas del sistema no pueden ser completamente cero.");
+
+            if (tolerancia <= 0)
+                errores.Add("La tolerancia debe ser mayor a cero.");
+
+            if (maxIteraciones <= 0)
+                errores.Add("El número de iteraciones debe ser mayor a cero.");
+
+            if (errores.Any())
+            {
+                ViewBag.MetodoSeleccionado = "Gauss";
+                ViewBag.Errores = errores;
+                return View("Index");
+            }
+
             double[,] A = new double[3, 3]
             {
-                { A11, A12, A13 },
-                { A21, A22, A23 },
-                { A31, A32, A33 }
+        { A11, A12, A13 },
+        { A21, A22, A23 },
+        { A31, A32, A33 }
             };
 
-            // Vector términos independientes b
             double[] b = new double[] { b1, b2, b3 };
-
-            // Vector inicial x0
             double[] x0 = new double[] { x0_1, x0_2, x0_3 };
 
-            // Llamar al método de Gauss-Seidel
             var resultados = GaussSeidelLogica.Calcular(A, b, x0, tolerancia, maxIteraciones);
-
             var ultimaIteracion = resultados.IteracionesDetalle.LastOrDefault();
 
-            // Generar ecuaciones en formato de lista para el PDF
             var ecuacionesList = GenerarEcuaciones(A, b);
-            // Generar ecuaciones en formato de texto para la vista
             string ecuacionesTexto = GenerarTextoEcuaciones(ecuacionesList);
 
             if (ultimaIteracion != null)
@@ -194,7 +313,7 @@ namespace ProyectoMetodos.Controllers
             Session["X2"] = x0_2;
             Session["X3"] = x0_3;
             Session["EcuacionesList"] = ecuacionesList;
-            Session["EcuacionesActual"] = ecuacionesTexto; 
+            Session["EcuacionesActual"] = ecuacionesTexto;
             Session["ResultadosGauss"] = resultados;
             Session["MetodoActual"] = "Gauss";
             ViewBag.ResultadosGauss = resultados;
@@ -203,6 +322,7 @@ namespace ProyectoMetodos.Controllers
 
             return View("Index");
         }
+
 
 
         // Método para guardar ejecución, reutilizable
