@@ -80,7 +80,7 @@ namespace ProyectoMetodos.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Ya existe un usuario con ese nombre y contraseña.");
+                ModelState.AddModelError("", "Ya existe este usuario.");
                 ViewBag.Usuario = usuario;
                 return View();
             }

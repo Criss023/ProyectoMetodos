@@ -54,7 +54,6 @@
             <div class="alert alert-danger text-center">@ViewBag.Error</div>
         }
 
-        <!-- ✅ Aquí se agregan los errores generales -->
         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger text-center" })
 
         @using (Html.BeginForm("Register", "Login", FormMethod.Post))

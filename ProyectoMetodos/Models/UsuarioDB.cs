@@ -71,10 +71,9 @@ namespace ProyectoMetodos.Models
                 // 1. Validar si ya existe un usuario con el mismo nombre y contraseña
                 using (var checkCmd = new SQLiteCommand(@"
             SELECT COUNT(*) FROM USUARIO 
-            WHERE Usuario = @Usuario AND Contrasena = @Contrasena", cn))
+            WHERE Usuario = @Usuario", cn))
                 {
                     checkCmd.Parameters.AddWithValue("@Usuario", usuario.Usuario);
-                    checkCmd.Parameters.AddWithValue("@Contrasena", usuario.Contrasena);
 
                     var existe = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
                     if (existe)
