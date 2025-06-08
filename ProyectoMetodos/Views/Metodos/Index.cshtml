@@ -1,12 +1,10 @@
 ﻿@{
     ViewBag.Title = "Métodos";
-
 }
 
 @{
     bool hayResultados = ViewBag.Resultados != null || ViewBag.ResultadosGauss != null;
 }
-
 
 <div class="container mt-5">
     <div class="row">
@@ -30,6 +28,19 @@
 
         <!-- Columna derecha: Contenido o mensaje -->
         <div class="col-md-8">
+
+            @if (ViewBag.Errores != null)
+            {
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach (string error in (List<string>)ViewBag.Errores)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
+
             @if (!hayResultados)
             {
                 <div id="mensajeInicial" class="alert alert-info text-center mb-0">
@@ -38,7 +49,8 @@
                 </div>
             }
 
-            <!-- Newton-Raphson -->
+
+            <!-- Formularios de métodos -->
             @using (Html.BeginForm("NewtonRaphson", "Metodos", FormMethod.Post))
             {
                 <div id="formularioNewtonRaphson" class="metodo-form" style="display:none;">
@@ -80,49 +92,49 @@
 
             @using (Html.BeginForm("Muller", "Metodos", FormMethod.Post))
             {
-                <!-- Muller -->
+                <!-- Müller -->
                 <div id="formularioMuller" class="metodo-form" style="display:none;">
-                    <h4 class="text-center">Metodo de Muller</h4>
+                    <h4 class="text-center">Método de Müller</h4>
 
                     <div class="row mb-2">
                         <label for="funcionMuller" class="col-md-4 col-form-label text-end">Función f(x):</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="funcionMuller" name="funcion" />
+                            <input type="text" class="form-control" id="funcionMuller" name="funcion" required />
                         </div>
                     </div>
 
                     <div class="row mb-2">
                         <label for="x0Muller" class="col-md-4 col-form-label text-end">x₀:</label>
                         <div class="col-md-8">
-                            <input type="number" step="any" class="form-control" id="x0Muller" name="x0" />
+                            <input type="number" step="any" class="form-control" id="x0Muller" name="x0" required />
                         </div>
                     </div>
 
                     <div class="row mb-2">
                         <label for="x1Muller" class="col-md-4 col-form-label text-end">x₁:</label>
                         <div class="col-md-8">
-                            <input type="number" step="any" class="form-control" id="x1Muller" name="x1" />
+                            <input type="number" step="any" class="form-control" id="x1Muller" name="x1" required />
                         </div>
                     </div>
 
                     <div class="row mb-2">
                         <label for="x2Muller" class="col-md-4 col-form-label text-end">x₂:</label>
                         <div class="col-md-8">
-                            <input type="number" step="any" class="form-control" id="x2Muller" name="x2" />
+                            <input type="number" step="any" class="form-control" id="x2Muller" name="x2" required />
                         </div>
                     </div>
 
                     <div class="row mb-2">
                         <label for="toleranciaMuller" class="col-md-4 col-form-label text-end">Tolerancia:</label>
                         <div class="col-md-8">
-                            <input type="number" step="any" class="form-control" id="toleranciaMuller" name="tolerancia" />
+                            <input type="number" step="any" class="form-control" id="toleranciaMuller" name="tolerancia" required />
                         </div>
                     </div>
 
                     <div class="row mb-2">
                         <label for="maxIterMuller" class="col-md-4 col-form-label text-end">Máximo de iteraciones:</label>
                         <div class="col-md-8">
-                            <input type="number" class="form-control" id="maxIterMuller" name="maxIteraciones" />
+                            <input type="number" class="form-control" id="maxIterMuller" name="maxIteraciones" required />
                         </div>
                     </div>
 
@@ -178,7 +190,6 @@
                     </div>
                 </div>
             }
-
 
             @using (Html.BeginForm("GaussSeidel", "Metodos", FormMethod.Post))
             {
@@ -241,137 +252,227 @@
                     <div class="d-flex justify-content-center mt-3">
                         <button type="submit" class="btn btn-success px-4">Calcular</button>
                     </div>
-
                 </div>
             }
 
+            <!-- Contenedor de resultados -->
+            <div id="resultadosContainer">
+                @if (ViewBag.Resultados != null && ((List<ProyectoMetodos.MetodosLogica.MetodoResultado>)ViewBag.Resultados).Count > 0)
+                {
+                    string metodo = ViewBag.MetodoSeleccionado as string ?? "Método";
 
-            @if (ViewBag.Resultados != null && ((List<ProyectoMetodos.MetodosLogica.MetodoResultado>)ViewBag.Resultados).Count > 0)
-            {
-                string metodo = ViewBag.MetodoSeleccionado as string ?? "Método";
+                    <h2 class="text-center">@metodo</h2>
+                    <h2 class="text-center">Resultados</h2>
+                    <p class="text-center">Función ingresada: @ViewBag.FuncionIngresada</p>
 
-                <h2 class="text-center">@metodo</h2>
-                <h2 class="text-center">Resultados</h2>
-                <p class="text-center">Función ingresada: @ViewBag.FuncionIngresada</p>
-
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Iteración</th>
-                            <th>Valor de x</th>
-                            <th>Error</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{
-                            var resultados = (List<ProyectoMetodos.MetodosLogica.MetodoResultado>)ViewBag.Resultados;
-                            foreach (var res in resultados)
-                            {
-                                if (!string.IsNullOrEmpty(res.MensajeError))
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Iteración</th>
+                                <th>Valor de x</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var resultados = (List<ProyectoMetodos.MetodosLogica.MetodoResultado>)ViewBag.Resultados;
+                                foreach (var res in resultados)
                                 {
-                                    <tr>
-                                        <td colspan="3" style="color:red;">@res.MensajeError</td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td>@res.Iteracion</td>
-                                        <td>@res.X.ToString("F6")</td>
-                                        <td>@res.Error.ToString("F6")</td>
-                                    </tr>
+                                    if (!string.IsNullOrEmpty(res.MensajeError))
+                                    {
+                                        <tr>
+                                            <td colspan="3" style="color:red;">@res.MensajeError</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>@res.Iteracion</td>
+                                            <td>@res.X.ToString("F6")</td>
+                                            <td>@res.Error.ToString("F6")</td>
+                                        </tr>
+                                    }
                                 }
                             }
-                        }
-                    </tbody>
-                </table>
-            }
+                        </tbody>
+                    </table>
+                }
 
+                @if (ViewBag.ResultadosGauss != null)
+                {
+                    var resultado = (ProyectoMetodos.MetodosLogica.GaussSeidelResultado)ViewBag.ResultadosGauss;
 
-            @if (ViewBag.ResultadosGauss != null)
-            {
-                var resultado = (ProyectoMetodos.MetodosLogica.GaussSeidelResultado)ViewBag.ResultadosGauss;
+                    <h2 class="text-center">@ViewBag.MetodoSeleccionado</h2>
+                    <h2 class="text-center">Resultados</h2>
+                    <h4 class="text-center">Ecuaciones ingresadas:</h4>
+                    <p class="text-center">@ViewBag.FuncionIngresada</p>
 
-                <h2 class="text-center">@ViewBag.MetodoSeleccionado</h2>
-                <h2 class="text-center">Resultados</h2>
-                <h4 class="text-center">Ecuaciones ingresadas:</h4>
-                <p class="text-center">@ViewBag.FuncionIngresada</p>
-
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Iteración</th>
-                            <th>Valores de X</th>
-                            <th>Error</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var iter in resultado.IteracionesDetalle)
-                        {
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>@iter.Numero</td>
-                                <td>
-                                    X1 = @iter.X1.ToString("F6"),
-                                    X2 = @iter.X2.ToString("F6"),
-                                    X3 = @iter.X3.ToString("F6")
-                                </td>
-                                <td>@iter.Error.ToString("F6")</td>
+                                <th>Iteración</th>
+                                <th>Valores de X</th>
+                                <th>Error</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+                        </thead>
+                        <tbody>
+                            @foreach (var iter in resultado.IteracionesDetalle)
+                            {
+                                <tr>
+                                    <td>@iter.Numero</td>
+                                    <td>
+                                        X1 = @iter.X1.ToString("F6"),
+                                        X2 = @iter.X2.ToString("F6"),
+                                        X3 = @iter.X3.ToString("F6")
+                                    </td>
+                                    <td>@iter.Error.ToString("F6")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
 
-            @if (ViewBag.Resultados != null || ViewBag.ResultadosGauss != null)
-            {
-                <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-                    <span></span> <!-- espacio izquierdo vacío -->
+                @if (ViewBag.Resultados != null || ViewBag.ResultadosGauss != null)
+                {
+                    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                        <span></span> <!-- espacio izquierdo vacío -->
 
-                    <div style="display: flex; gap: 10px;">
-                        <!-- Botón de Reporte -->
-                        <form action="@Url.Action("Reporte", "Metodos")" method="get">
-                            <input type="hidden" name="metodo" value="@ViewBag.MetodoSeleccionado" />
-                            <button type="submit" class="btn btn-primary">Reporte</button>
-                        </form>
+                        <div style="display: flex; gap: 10px;">
+                            <!-- Botón de Reporte -->
+                            <form action="@Url.Action("Reporte", "Metodos")" method="get">
+                                <input type="hidden" name="metodo" value="@ViewBag.MetodoSeleccionado" />
+                                <button type="submit" class="btn btn-primary">Reporte</button>
+                            </form>
 
-                        <!-- Botón de Descargar PDF -->
-                        <form action="@Url.Action("DescargarPDF", "Metodos")" method="get">
-                            <input type="hidden" name="metodo" value="@ViewBag.MetodoSeleccionado" />
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-                            </button>
-                        </form>
+                            <!-- Botón de Descargar PDF -->
+                            <form action="@Url.Action("DescargarPDF", "Metodos")" method="get">
+                                <input type="hidden" name="metodo" value="@ViewBag.MetodoSeleccionado" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
+            <!-- Fin contenedor de resultados -->
 
         </div>
     </div>
 </div>
 
+<!-- Script para gestionar visibilidad, limpieza de formularios y resultados -->
 <script>
-    const botones = document.querySelectorAll(".metodo-btn");
-    const formularios = document.querySelectorAll(".metodo-form");
-    const inputMetodo = document.getElementById("metodoSeleccionado");
-    const mensajeInicial = document.getElementById("mensajeInicial");
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1) Saber si hay resultados renderizados (pasado desde Razor)
+        var hayResultados = @hayResultados.ToString().ToLower(); // true o false
 
-    botones.forEach(boton => {
-        boton.addEventListener("click", () => {
-            // Ocultar mensaje inicial
-            mensajeInicial.style.display = "none";
+        // 2) Obtener todos los bloques .metodo-form y sus formularios padre
+        const bloques = document.querySelectorAll('.metodo-form');
+        const formularios = Array.from(bloques).map(bloque => bloque.closest('form'));
 
-            // Ocultar todos los formularios
-            formularios.forEach(f => f.style.display = "none");
+        // 3) Obtener el contenedor de resultados
+        const resultadosContainer = document.getElementById('resultadosContainer');
 
-            // Obtener el método
-            const metodo = boton.getAttribute("data-metodo");
+        // 4) Al cargar la página, ocultar y resetear todos los formularios
+        bloques.forEach(bloque => {
+            bloque.style.display = 'none';
+        });
+        formularios.forEach(form => {
+            if (form) {
+                form.reset();
+            }
+        });
 
-            // Mostrar el formulario correspondiente
-            const formId = "formulario" + metodo;
-            document.getElementById(formId).style.display = "block";
+        // 5) Mostrar u ocultar el contenedor de resultados SOLO si hay resultados
+        if (hayResultados) {
+            resultadosContainer.style.display = 'block';
+        } else {
+            resultadosContainer.style.display = 'none';
+        }
 
-            // Establecer el valor del input oculto
-            inputMetodo.value = metodo;
+        // 6) Obtener los botones de método y el mensaje inicial
+        const botones = document.querySelectorAll('.metodo-btn');
+        const mensajeInicial = document.getElementById('mensajeInicial');
+
+        botones.forEach(boton => {
+            boton.addEventListener('click', function () {
+                // a) Ocultar mensaje inicial si está presente
+                if (mensajeInicial) {
+                    mensajeInicial.style.display = 'none';
+                }
+
+                // b) Ocultar y resetear todos los formularios
+                bloques.forEach(bloque => {
+                    bloque.style.display = 'none';
+                });
+                formularios.forEach(form => {
+                    if (form) {
+                        form.reset();
+                    }
+                });
+
+                // c) Ocultar también el contenedor de resultados 
+                if (resultadosContainer) {
+                    resultadosContainer.style.display = 'none';
+                }
+
+                // d) Mostrar únicamente el formulario del método seleccionado
+                const metodo = this.getAttribute('data-metodo'); // ej. "NewtonRaphson"
+                const formId = 'formulario' + metodo;
+                const formularioActivo = document.getElementById(formId);
+                if (formularioActivo) {
+                    formularioActivo.style.display = 'block';
+                }
+            });
+        });
+
+        // 7) Validación previa al submit de cada formulario
+        bloques.forEach(function (bloque) {
+            const formulario = bloque.closest('form');
+            if (!formulario) return;
+
+            formulario.addEventListener('submit', function (e) {
+                const estilo = window.getComputedStyle(bloque);
+                if (estilo.display === 'none') {
+                    e.preventDefault();
+                    return;
+                }
+
+                const inputsRequeridos = bloque.querySelectorAll('input[required]');
+                for (let i = 0; i < inputsRequeridos.length; i++) {
+                    const campo = inputsRequeridos[i];
+                    if (!campo.value) {
+                        e.preventDefault();
+                        alert('Por favor, complete todos los campos requeridos.');
+                        return;
+                    }
+                }
+
+                // Validación de campos específicos
+                const tolerancia = bloque.querySelector('input[name="tolerancia"]');
+                const maxIter = bloque.querySelector('input[name="maxIteraciones"]');
+
+                if (tolerancia && parseFloat(tolerancia.value) <= 0) {
+                    e.preventDefault();
+                    alert('La tolerancia debe ser mayor que cero.');
+                    return;
+                }
+
+                if (maxIter && parseInt(maxIter.value) <= 0) {
+                    e.preventDefault();
+                    alert('El número máximo de iteraciones debe ser mayor que cero.');
+                    return;
+                }
+
+                // Validación de función (solo presencia de 'x' como mínima prueba)
+                const funcion = bloque.querySelector('input[name="funcion"]');
+                if (funcion && !funcion.value.includes('x')) {
+                    e.preventDefault();
+                    alert('La función debe contener la variable "x".');
+                    return;
+                }
+            });
         });
     });
 </script>
